@@ -33,9 +33,9 @@ const App = () => {
 
     // 입력 필드 초기화
     e.target.name.value = "";
-    e.target.vintage.value = "";
-    e.target.price.value = "";
-    e.target.purchaseLocation.value = "";
+    setVintage("");
+    setPrice("");
+    setPurchaseLocation("");
   };
 
   const handleVintageChange = (e) => {
