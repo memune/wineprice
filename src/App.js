@@ -14,13 +14,28 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const wineName = e.target.name.value;
+    const winePrice = e.target.price.value;
+
+    if (!wineName || !winePrice) {
+      // 와인 이름 또는 가격이 입력되지 않은 경우
+      alert("와인 이름과 가격은 필수 입력 사항입니다.");
+      return;
+    }
+
     addWine({
       id: Date.now(),
-      name: e.target.name.value,
+      name: wineName,
       vintage: e.target.vintage.value,
-      price: e.target.price.value,
+      price: winePrice,
       purchaseLocation: e.target.purchaseLocation.value,
     });
+
+    // 입력 필드 초기화
+    e.target.name.value = "";
+    e.target.vintage.value = "";
+    e.target.price.value = "";
+    e.target.purchaseLocation.value = "";
   };
 
   const handleVintageChange = (e) => {
@@ -98,14 +113,7 @@ const App = () => {
           </label>
           <input type="text" placeholder="Name" name="name" className="input" />
         </div>
-        <div className="form-group">
-          <label htmlFor="vintage" className="label">
-            빈티지를 알려주세요
-          </label>
-          <select value={vintage} onChange={handleVintageChange} className="input" name="vintage">
-            {generateVintageOptions()}
-          </select>
-        </div>
+        
         <div className="form-group">
           <label htmlFor="price" className="label">
             얼마에 구매하셨나요?(원화)
@@ -119,6 +127,17 @@ const App = () => {
             className="input"
           />
         </div>
+
+        <div className="form-group">
+          <label htmlFor="vintage" className="label">
+            빈티지를 알려주세요
+          </label>
+          <select value={vintage} onChange={handleVintageChange} className="input" name="vintage">
+            {generateVintageOptions()}
+          </select>
+        </div>
+
+
         <div className="form-group">
           <label htmlFor="purchaseLocation" className="label">
             어디에서 구매했나요?
@@ -139,8 +158,8 @@ const App = () => {
         <thead>
           <tr>
             <th className="table-header">와인명</th>
-            <th className="table-header">빈티지</th>
             <th className="table-header">구매 가격</th>
+            <th className="table-header">빈티지</th>
             <th className="table-header">구매 장소</th>
             <th className="table-header">삭제</th>
           </tr>
@@ -151,8 +170,8 @@ const App = () => {
             .map((wine) => (
               <tr key={wine.id}>
                 <td className="table-cell">{wine.name}</td>
-                <td className="table-cell">{formatVintage(wine.vintage)}</td>
                 <td className="table-cell">{formatPriceWithCommas(wine.price)}</td>
+                <td className="table-cell">{formatVintage(wine.vintage)}</td>
                 <td className="table-cell">{wine.purchaseLocation}</td>
                 <td className="table-cell">
                   <button onClick={() => handleDelete(wine.id)}>Delete</button> {/* 삭제 버튼 */}
