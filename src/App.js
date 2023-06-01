@@ -1,12 +1,29 @@
 import React, { useState } from "react";
 import "./App.css";
 
+
+const purchaseLocations = [
+  { id: 1, name: "이마트" },
+  { id: 2, name: "롯데마트" },
+  { id: 3, name: "홈플러스" },
+  { id: 4, name: "할인마트" },
+  { id: 5, name: "와인샵" },
+  { id: 6, name: "데일리샷" },
+];
+
+const purchaseMethods = [
+  { id: 1, name: "평시할인" },
+  { id: 2, name: "세일전" },
+];
+
+
 const App = () => {
   const [wines, setWines] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [vintage, setVintage] = useState("");
   const [price, setPrice] = useState("");
   const [purchaseLocation, setPurchaseLocation] = useState("");
+  const [purchaseMethod, setPurchaseMethod] = useState("");
 
   const addWine = (wine) => {
     setWines([...wines, wine]);
@@ -29,6 +46,7 @@ const App = () => {
       vintage: e.target.vintage.value,
       price: winePrice,
       purchaseLocation: e.target.purchaseLocation.value,
+      purchaseMethod: e.target.purchaseMethod.value,
     });
 
     // 입력 필드 초기화
@@ -36,6 +54,7 @@ const App = () => {
     setVintage("");
     setPrice("");
     setPurchaseLocation("");
+    setPurchaseMethod("");
   };
 
   const handleVintageChange = (e) => {
@@ -49,6 +68,10 @@ const App = () => {
 
   const handlePurchaseLocationChange = (e) => {
     setPurchaseLocation(e.target.value);
+  };
+
+  const handlePurchaseMethodChange = (e) => {
+    setPurchaseMethod(e.target.value);
   };
 
   const formatVintage = (vintage) => {
@@ -142,15 +165,40 @@ const App = () => {
           <label htmlFor="purchaseLocation" className="label">
             어디에서 구매했나요?
           </label>
-          <input
-            type="text"
-            placeholder="Purchase Location"
+          <select
             name="purchaseLocation"
             value={purchaseLocation}
             onChange={handlePurchaseLocationChange}
             className="input"
-          />
+          >
+          {purchaseLocations.map((location) => (
+            <option key={location.id} value={location.name}>
+              {location.name}
+            </option>
+          ))}
+          </select>
         </div>
+        
+        <div className="form-group">
+          <label htmlFor="purchaseMethod" className="label">
+            어떤 방식으로 구매했나요?
+          </label>
+          <select
+            name="purchaseMethod"
+            value={purchaseMethod}
+            onChange={handlePurchaseMethodChange}
+            className="input"
+          >
+          {purchaseMethods.map((method) => (
+            <option key={method.id} value={method.name}>
+              {method.name}
+            </option>
+          ))}
+          </select>
+        </div>
+
+
+
         <input type="submit" value="등록하기" className="submit-button" />
       </form>
 
@@ -161,6 +209,7 @@ const App = () => {
             <th className="table-header">구매 가격</th>
             <th className="table-header">빈티지</th>
             <th className="table-header">구매 장소</th>
+            <th className="table-header">구매 방식</th>
             <th className="table-header">삭제</th>
           </tr>
         </thead>
@@ -173,6 +222,7 @@ const App = () => {
                 <td className="table-cell">{formatPriceWithCommas(wine.price)}</td>
                 <td className="table-cell">{formatVintage(wine.vintage)}</td>
                 <td className="table-cell">{wine.purchaseLocation}</td>
+                <td className="table-cell">{wine.purchaseMethod}</td>
                 <td className="table-cell">
                   <button onClick={() => handleDelete(wine.id)}>Delete</button> {/* 삭제 버튼 */}
                 </td>
