@@ -12,9 +12,17 @@ const purchaseLocations = [
 ];
 
 const purchaseMethods = [
-  { id: 1, name: "평시할인" },
+  { id: 1, name: "평상시 가격" },
   { id: 2, name: "세일전" },
+  { id: 3, name: "묶음할인" },
 ];
+
+
+// 언제 구매했나요 필드 추가
+// 용량 필드 추가
+// 구매처를 직접 입력할 수 있는 옵션도 추가
+// 할인 방식 등의 참고 자료를 직접 입력할 수 있게 추가
+
 
 
 const App = () => {
@@ -24,6 +32,8 @@ const App = () => {
   const [price, setPrice] = useState("");
   const [purchaseLocation, setPurchaseLocation] = useState("");
   const [purchaseMethod, setPurchaseMethod] = useState("");
+
+  const [showModal, setShowModal] = useState(false);
 
   const addWine = (wine) => {
     setWines([...wines, wine]);
@@ -55,6 +65,15 @@ const App = () => {
     setPrice("");
     setPurchaseLocation("");
     setPurchaseMethod("");
+    setShowModal(false); // 모달 창 닫기
+  };
+
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
   };
 
   const handleVintageChange = (e) => {
@@ -121,6 +140,10 @@ const App = () => {
     <div className="app">
       <h1 className="title">와인얼마</h1>
 
+      <button onClick={openModal} className="register-button">
+        등록하기
+      </button>
+
       <input
         type="text"
         placeholder="Search"
@@ -129,78 +152,87 @@ const App = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
       />
 
-      <form onSubmit={handleSubmit} className="wine-form">
-        <div className="form-group">
-          <label htmlFor="name" className="label">
-            와인의 이름을 입력하세요
-          </label>
-          <input type="text" placeholder="Name" name="name" className="input" />
+   
+
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <form onSubmit={handleSubmit} className="wine-form">
+              <div className="form-group">
+                <label htmlFor="name" className="label">
+                  와인의 이름을 입력하세요
+                </label>
+                <input type="text" placeholder="Name" name="name" className="input" />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="price" className="label">
+                  얼마에 구매하셨나요?(원화)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Price"
+                  name="price"
+                  value={formatPriceWithCommas(price)}
+                  onChange={handlePriceChange}
+                  className="input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="vintage" className="label">
+                  빈티지를 알려주세요
+                </label>
+                <select value={vintage} onChange={handleVintageChange} className="input" name="vintage">
+                  {generateVintageOptions()}
+                </select>
+              </div>
+
+
+              <div className="form-group">
+                <label htmlFor="purchaseLocation" className="label">
+                  어디에서 구매했나요?
+                </label>
+                <select
+                  name="purchaseLocation"
+                  value={purchaseLocation}
+                  onChange={handlePurchaseLocationChange}
+                  className="input"
+                >
+                {purchaseLocations.map((location) => (
+                  <option key={location.id} value={location.name}>
+                    {location.name}
+                  </option>
+                ))}
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="purchaseMethod" className="label">
+                  어떤 방식으로 구매했나요?
+                </label>
+                <select
+                  name="purchaseMethod"
+                  value={purchaseMethod}
+                  onChange={handlePurchaseMethodChange}
+                  className="input"
+                >
+                {purchaseMethods.map((method) => (
+                  <option key={method.id} value={method.name}>
+                    {method.name}
+                  </option>
+                ))}
+                </select>
+              </div>
+
+              <input type="submit" value="등록하기" className="submit-button" />
+              <button onClick={closeModal} className="cancel-button">
+                취소하기
+              </button>
+            </form>
+          </div>
         </div>
-        
-        <div className="form-group">
-          <label htmlFor="price" className="label">
-            얼마에 구매하셨나요?(원화)
-          </label>
-          <input
-            type="text"
-            placeholder="Price"
-            name="price"
-            value={formatPriceWithCommas(price)}
-            onChange={handlePriceChange}
-            className="input"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="vintage" className="label">
-            빈티지를 알려주세요
-          </label>
-          <select value={vintage} onChange={handleVintageChange} className="input" name="vintage">
-            {generateVintageOptions()}
-          </select>
-        </div>
-
-
-        <div className="form-group">
-          <label htmlFor="purchaseLocation" className="label">
-            어디에서 구매했나요?
-          </label>
-          <select
-            name="purchaseLocation"
-            value={purchaseLocation}
-            onChange={handlePurchaseLocationChange}
-            className="input"
-          >
-          {purchaseLocations.map((location) => (
-            <option key={location.id} value={location.name}>
-              {location.name}
-            </option>
-          ))}
-          </select>
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="purchaseMethod" className="label">
-            어떤 방식으로 구매했나요?
-          </label>
-          <select
-            name="purchaseMethod"
-            value={purchaseMethod}
-            onChange={handlePurchaseMethodChange}
-            className="input"
-          >
-          {purchaseMethods.map((method) => (
-            <option key={method.id} value={method.name}>
-              {method.name}
-            </option>
-          ))}
-          </select>
-        </div>
-
-
-
-        <input type="submit" value="등록하기" className="submit-button" />
-      </form>
+      )}
 
       <table className="wine-table">
         <thead>
